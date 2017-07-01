@@ -2,7 +2,7 @@
 Generate structs for use in GameMaker
 
 # Example struct definition file
-```
+```c#
 struct foo {
   x,
   y,
