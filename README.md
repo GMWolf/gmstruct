@@ -1,7 +1,7 @@
 # gmstruct
 Generate structs for use in GameMaker
 
-# Example stuct definition file
+# Example struct definition file
 ```
 struct foo {
   x,
