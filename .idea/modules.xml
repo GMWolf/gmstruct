@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GMStructGUI.iml" filepath="$PROJECT_DIR$/.idea/modules/GMStructGUI.iml" group="GMStructGUI" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GMStructGUI/GMStructGUI_main.iml" filepath="$PROJECT_DIR$/.idea/modules/GMStructGUI/GMStructGUI_main.iml" group="GMStructGUI" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/GMStructGUI/GMStructGUI_test.iml" filepath="$PROJECT_DIR$/.idea/modules/GMStructGUI/GMStructGUI_test.iml" group="GMStructGUI" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/generator.iml" filepath="$PROJECT_DIR$/.idea/modules/generator.iml" group="generator" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/generator/generator_main.iml" filepath="$PROJECT_DIR$/.idea/modules/generator/generator_main.iml" group="generator" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/generator/generator_test.iml" filepath="$PROJECT_DIR$/.idea/modules/generator/generator_test.iml" group="generator" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gmstruct.iml" filepath="$PROJECT_DIR$/.idea/modules/gmstruct.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gmstruct_main.iml" filepath="$PROJECT_DIR$/.idea/modules/gmstruct_main.iml" group="gmstruct" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/gmstruct_test.iml" filepath="$PROJECT_DIR$/.idea/modules/gmstruct_test.iml" group="gmstruct" />
+    </modules>
+  </component>
+</project>

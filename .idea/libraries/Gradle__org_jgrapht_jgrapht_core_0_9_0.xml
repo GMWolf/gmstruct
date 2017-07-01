@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="Gradle: org.jgrapht:jgrapht-core:0.9.0">
+    <CLASSES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jgrapht/jgrapht-core/0.9.0/6297555cbffd288a9b00c692c631edd235a649cb/jgrapht-core-0.9.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES>
+      <root url="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jgrapht/jgrapht-core/0.9.0/aea453fd9bca818dc7add23f71daa3b6151891c3/jgrapht-core-0.9.0-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

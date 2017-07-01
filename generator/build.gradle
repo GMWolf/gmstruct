@@ -1,0 +1,17 @@
+group 'net.fbridault.gmwolf'
+version '1.0-SNAPSHOT'
+
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+sourceSets.main.java.srcDirs = [ "src/"]
+
+
+apply plugin: "java"
+dependencies {
+    // https://mvnrepository.com/artifact/org.jgrapht/jgrapht-core
+    compile group: 'org.jgrapht', name: 'jgrapht-core', version: '0.9.0'
+    // https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
+    compile group: 'org.antlr', name: 'antlr4-runtime', version: '4.7'
+}
