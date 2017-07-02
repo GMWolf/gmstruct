@@ -10,12 +10,16 @@ public class Generator {
 
     public static List<Script> generateScripts(String file) {
         List<Script> scripts = new ArrayList<>();
-        try {
-            Set<Struct> structs = Parser.parseFile(file);
+        Parser parser = new Parser();
 
-            for(Struct struct : structs) {
+        try {
+            NameSpace nameSpace = parser.parseFile(file);
+
+            Set<Struct> structs = new HashSet<>();
+            nameSpace.forEachStruct((struct) ->{
                 scripts.addAll(struct.getScripts());
-            }
+                structs.add(struct);
+            });
 
             scripts.add(getGlobalScript(structs));
             scripts.add(getTypeScript());
@@ -39,7 +43,7 @@ public class Generator {
         Iterator<Struct> structIterator = structs.iterator();
         while(structIterator.hasNext()) {
             Struct struct = structIterator.next();
-            enumBuilder.append("\t").append(struct.getName()).append(" = ").append(struct.getId());
+            enumBuilder.append("\t").append(struct.getGMLName()).append(" = ").append(struct.getId());
             if (structIterator.hasNext()) {
                 enumBuilder.append(",\n");
             } else {

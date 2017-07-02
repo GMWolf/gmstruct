@@ -1,11 +1,13 @@
 package net.fbridault.gmwolf.gmstruct.generator;
 
+import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructBaseListener;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructLexer;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.AttributeContext;
+import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.FileContext;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.StructContext;
-import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.StructListContext;
 import org.antlr.v4.runtime.*;
+import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.jgrapht.DirectedGraph;
 import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -19,14 +21,28 @@ import java.util.*;
  * Created by felix on 01/07/2017.
  */
 
-public class Parser {
+public class Parser extends GMStructBaseListener{
+    Struct currentStruct;
+    NameSpace currentNameSpace;
+    NameSpace globalNameSpace;
 
-    public static Set<Struct> parseFile(String fileName) throws IOException {
-        StructListContext context = readFile(fileName);
-        return new HashSet<>(genStructs(context));
+    DirectedGraph<Struct, DefaultEdge> dependencies;
+
+    public Parser() {
+        dependencies = new DefaultDirectedGraph<>(DefaultEdge.class);
+        currentNameSpace = null;
+        globalNameSpace = new GlobalNameSpace();
+        currentNameSpace = globalNameSpace;
     }
 
-    private static StructListContext readFile(String fileName) throws IOException {
+
+    public NameSpace parseFile(String fileName) throws IOException {
+        FileContext context = readFile(fileName);
+        genStructs(context);
+        return globalNameSpace;
+    }
+
+    private FileContext readFile(String fileName) throws IOException {
 
         //Create lexer
         GMStructLexer lexer;
@@ -36,40 +52,28 @@ public class Parser {
         //Create parser
         GMStructParser parser = new GMStructParser(tokenStream);
 
-        return parser.structList();
+        return parser.file();
     }
 
     /**
      * Generates a set of struct from the given struct list context
-     * @param structListContext context to build structs from
-     * @return
+     * @param fileContext context to build structs from
+     * @return returns a collection of generated structs
      */
-    private static Collection<Struct> genStructs(StructListContext structListContext) {
-        Map<String, Struct> structMap = new HashMap<>();
-        Map<Struct, StructContext> structContextMap = new HashMap<>();
-        DirectedGraph<Struct, DefaultEdge> dependencies = new DefaultDirectedGraph<Struct, DefaultEdge>(DefaultEdge.class);
+    private void genStructs(FileContext fileContext) {
 
-        //Get all structs
-        int id = 0;
-        for(StructContext context : structListContext.struct()) {
-            String name = context.name.getText();
-            Struct struct = new Struct(id++, name);
-            Struct pre = structMap.put(name, struct);
-            if (pre != null) { //Struct already defined
-                throw new RuntimeException("Error at line " + context.getStart().getLine() + ":\nStruct " + name + " already defined!");
-            }
-            dependencies.addVertex(struct);
-            structContextMap.put(struct, context);
-        }
-
-
+        //Get the structs from the parse tree
+        ParseTreeWalker walker = new ParseTreeWalker();
+        walker.walk(this, fileContext);
 
         //Set dependencies
         CycleDetector<Struct, DefaultEdge> cycleDetector = new CycleDetector<>(dependencies);
-        for(Struct struct : structMap.values()) {
-            StructContext context = structContextMap.get(struct);
+
+        globalNameSpace.forEachStruct((struct)-> {
+            StructContext context = struct.getContext();
             if (context.parent != null) {
-                Struct parent = structMap.get(context.parent.getText());
+                StructPath parentPath = new StructPath(context.parent);
+                Struct parent = struct.getNameSpace().findStruct(parentPath);
                 if (parent == null) { //unknown parent
                     throw  new RuntimeException("Error at line " + context.getStart().getLine() + ":\nUnknown struct " + context.parent.getText() + ".");
                 }
@@ -81,7 +85,7 @@ public class Parser {
                     throw new RuntimeException("Error ar line " + context.getStart().getLine() + ":\nDependency cycle detected with struct " + struct.getName());
                 }
             }
-        }
+        });
 
 
         //Add attributes and flags
@@ -98,7 +102,7 @@ public class Parser {
             }
 
             //Append attributes from context
-            StructContext context = structContextMap.get(struct);
+            StructContext context = struct.getContext();
             for(AttributeContext attributeContext : context.attributeList().attribute()) {
                 String name = attributeContext.name.getText();
                 String def = null;
@@ -112,7 +116,36 @@ public class Parser {
             }
         });
 
-        return structMap.values();
+
+
+
     }
 
+    @Override
+    public void enterStruct(StructContext ctx) {
+        String name = ctx.name.getText();
+        int id = currentStruct != null ? currentStruct.getId()+1 : 0;
+
+        currentStruct = new Struct(currentNameSpace, id, ctx);
+
+        if (currentNameSpace.addStruct(currentStruct)) {
+            throw new RuntimeException("Error at line " + ctx.getStart().getLine() + ":\nStruct " + name + " already defined!");
+        }
+        dependencies.addVertex(currentStruct);
+    }
+
+    @Override
+    public void exitStruct(StructContext ctx) {
+        currentStruct = null;
+    }
+
+    @Override
+    public void enterNameSpace(GMStructParser.NameSpaceContext ctx) {
+       currentNameSpace = new NameSpace(currentNameSpace, ctx.name.getText());
+    }
+
+    @Override
+    public void exitNameSpace(GMStructParser.NameSpaceContext ctx) {
+        currentNameSpace = currentNameSpace.getParent();
+    }
 }

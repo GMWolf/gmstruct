@@ -1,5 +1,8 @@
 package net.fbridault.gmwolf.gmstruct.generator;
 
+import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser;
+
+import javax.print.attribute.standard.MediaSize;
 import java.util.*;
 
 /**
@@ -16,16 +19,30 @@ public class Struct implements Iterable<Attribute>{
     private int[] flags;
     private int id;
 
+    private NameSpace nameSpace;
 
-    public Struct(int id, String name, Struct parent) {
+    private GMStructParser.StructContext context;
+
+
+    public Struct(NameSpace nameSpace, int id, String name, Struct parent) {
         this.id = id;
         this.name = name;
         attributes = new ArrayList<>();
         this.parent = parent;
+        this.nameSpace = nameSpace;
     }
 
-    public Struct(int id, String name) {
-        this(id, name,null);
+    public Struct(NameSpace nameSpace, int id, String name) {
+        this(nameSpace, id, name,null);
+    }
+
+    public Struct(NameSpace nameSpace, int id, GMStructParser.StructContext ctx) {
+        this(nameSpace, id, ctx.name.getText());
+        this.context = ctx;
+    }
+
+    public GMStructParser.StructContext getContext() {
+        return context;
     }
 
     //region struct stuff
@@ -140,13 +157,21 @@ public class Struct implements Iterable<Attribute>{
 
     //region writing
 
+    public String getGMLName() {
+        return nameSpace.getGMLPrefix() + name;
+    }
+
+    public NameSpace getNameSpace() {
+        return nameSpace;
+    }
+
     /**
      * Returns the creation script
      * @return
      */
     public Script getNewScript() {
         String desc = "returns a new " + name + " struct\n";
-        Script script = new Script("new_" + getName(), desc);
+        Script script = new Script("new_" + getGMLName(), desc);
 
         script.append("return [").append(id);
 
@@ -169,7 +194,7 @@ public class Struct implements Iterable<Attribute>{
     public Script getGetSetter(Attribute attribute) {
         int index = getAttributePos(attribute) + 1;
         String desc = "returns " + attribute.getName() + " and sets it if argument provided.";
-        Script script = new Script(getName() + "_" + attribute.getName(), desc);
+        Script script = new Script(getGMLName() + "_" + attribute.getName(), desc);
         script.addParameter(getName(), "The struct to set " + attribute.getName() + " attribute of.");
         script.addParameter("*value", "The value to set " + attribute.getName() +" to.");
         script.append(check());
@@ -183,13 +208,13 @@ public class Struct implements Iterable<Attribute>{
     }
 
     public String check() {
-        return "if !is_" + getName() + "(argument[0])\n" +
+        return "if !is_" + getGMLName() + "(argument[0])\n" +
                 "\tshow_error(\"Struct is not of type " + getName() + ".\", true);\n";
     }
 
     public Script getIs() {
         String desc = "Check if the struct is of type " + getName();
-        Script script = new Script("is_" + getName(), desc);
+        Script script = new Script("is_" + getGMLName(), desc);
         script.addParameter("Struct", "the struct to check");
         script.append("if (!is_array(argument0) || array_length_1d(argument0) == 0)\n")
                 .append("\t return false;\n");
