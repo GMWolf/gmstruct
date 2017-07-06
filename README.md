@@ -1,5 +1,7 @@
 # gmstruct
-Generate structs for use in GameMaker
+Generate structs for GameMaker
+
+Download: https://gmwolf.itch.io/gmstruct
 
 Forum topic:
 https://forum.yoyogames.com/index.php?threads/gmstruct-struct-generation-for-gamemaker-studio.29731/
