@@ -12,13 +12,14 @@ struct: 'struct' name=ID (':' parent=structPath)? '{' attributeList '}';
 
 attributeList : (attribute (','attribute)*)?;
 
-attribute : name=ID  ('=' def=value)?;
+attribute : (type = ID)? name=ID  ('=' def=value)?;
 
 value : NUM | ID | STR;
 
 structPath : ID ('.' ID)*;
 
+
 STR: '"' .+? '"';
 ID: [a-zA-Z_] [a-zA-Z0-9_]* ;
-NUM: ([0-9.]+) | '$'([0-9a-fA-F]+);
+NUM: [+-]?([0-9.]+) | '$'([0-9a-fA-F]+);
 WS : (' ' | '\n' | '\r' | '\t') -> skip;

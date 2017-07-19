@@ -1,5 +1,7 @@
 package net.fbridault.gmwolf.gmstruct.generator;
 
+import net.fbridault.gmwolf.gmstruct.generator.type.Type;
+
 /**
  * Represents an attribute with default value
  * Created by felix on 01/07/2017.
@@ -7,6 +9,7 @@ package net.fbridault.gmwolf.gmstruct.generator;
 public class Attribute {
     private String name;
     private String def;
+    private Type type;
 
     public Attribute(String name, String def) {
         if (name == null) {

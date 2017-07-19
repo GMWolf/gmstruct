@@ -25,6 +25,7 @@ public class Parser extends GMStructBaseListener{
     Struct currentStruct;
     NameSpace currentNameSpace;
     NameSpace globalNameSpace;
+    int nextStructId;
 
     DirectedGraph<Struct, DefaultEdge> dependencies;
 
@@ -33,6 +34,7 @@ public class Parser extends GMStructBaseListener{
         currentNameSpace = null;
         globalNameSpace = new GlobalNameSpace();
         currentNameSpace = globalNameSpace;
+        nextStructId = 0;
     }
 
 
@@ -124,7 +126,7 @@ public class Parser extends GMStructBaseListener{
     @Override
     public void enterStruct(StructContext ctx) {
         String name = ctx.name.getText();
-        int id = currentStruct != null ? currentStruct.getId()+1 : 0;
+        int id = nextStructId++;
 
         currentStruct = new Struct(currentNameSpace, id, ctx);
 
