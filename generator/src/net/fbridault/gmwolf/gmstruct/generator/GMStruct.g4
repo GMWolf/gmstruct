@@ -12,7 +12,7 @@ struct: 'struct' name=ID (':' parent=structPath)? '{' attributeList '}';
 
 attributeList : (attribute (','attribute)*)?;
 
-attribute : (type = ID)? name=ID  ('=' def=value)?;
+attribute : (type=ID)? name=ID  ('=' def=value)?;
 
 value : NUM | ID | STR;
 

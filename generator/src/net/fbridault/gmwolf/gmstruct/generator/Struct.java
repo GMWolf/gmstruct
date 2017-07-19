@@ -155,7 +155,7 @@ public class Struct implements Iterable<Attribute>{
     }
     //endregion
 
-    //region writing
+    //region gml writing
 
     public String getGMLName() {
         return nameSpace.getGMLPrefix() + name;
@@ -199,8 +199,14 @@ public class Struct implements Iterable<Attribute>{
         script.addParameter("*value", "The value to set " + attribute.getName() +" to.");
         script.append(check());
         script.append("var s = argument[0];\n")
-                .append("if (argument_count == 2) {\n")
-                .append("\ts[@ ").append(index).append("] = argument[1];\n")
+                .append("if (argument_count == 2) {\n");
+        //add type check
+        if (attribute.getType() != null) {
+            script.append("\tif (!").append(attribute.getType().getChecker().replace("{0}", "argument[1]")).append("){\n")
+                    .append("\t\tshow_error(\"Argument is not of type "+ attribute.getType() +"\", true);\n")
+                    .append("\t}\n");
+        }
+                script.append("\ts[@ ").append(index).append("] = argument[1];\n")
                 .append("}\n")
                 .append("return s[").append(index).append("];");
 

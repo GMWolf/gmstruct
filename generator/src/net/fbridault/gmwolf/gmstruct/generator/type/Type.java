@@ -1,5 +1,6 @@
 package net.fbridault.gmwolf.gmstruct.generator.type;
 
+import net.fbridault.gmwolf.gmstruct.generator.NameSpace;
 import net.fbridault.gmwolf.gmstruct.generator.Parser;
 
 import java.util.HashMap;
@@ -17,12 +18,22 @@ public interface Type {
         public String getChecker() {
             return "is_string({0})";
         }
+
+        @Override
+        public String toString() {
+            return "string";
+        }
     };
 
     final static Type REAL = new Type() {
         @Override
         public String getChecker() {
             return "is_real({0})";
+        }
+
+        @Override
+        public String toString() {
+            return "real";
         }
     };
 
@@ -31,12 +42,22 @@ public interface Type {
         public String getChecker() {
             return "is_pointer({0})";
         }
+
+        @Override
+        public String toString() {
+            return "pointer";
+        }
     };
 
     final static Type ARRAY = new Type() {
         @Override
         public String getChecker() {
             return "is_array({0})";
+        }
+
+        @Override
+        public String toString() {
+            return "array";
         }
     };
 
@@ -46,11 +67,11 @@ public interface Type {
 
     /**
      * Finds the type from a string for the given parser object
-     * @param parser
+     * @param nameSpace
      * @param name
      * @return
      */
-    static Type getType(Parser parser, String name) {
+    static Type get(NameSpace nameSpace, String name) {
         switch (name) {
             case "string": return STRING;
             case "real" : return REAL;
@@ -58,8 +79,14 @@ public interface Type {
             case "array" : return ARRAY;
         }
 
-        return null;
+        if (!types.containsKey(name)) {
+            types.put(name, new StructType(nameSpace.getStruct(name)));
+        }
+
+        return types.get(name);
     }
+
+
 
 
     String getChecker();

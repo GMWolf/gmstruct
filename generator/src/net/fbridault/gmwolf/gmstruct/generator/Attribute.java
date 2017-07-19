@@ -9,22 +9,25 @@ import net.fbridault.gmwolf.gmstruct.generator.type.Type;
 public class Attribute {
     private String name;
     private String def;
+
     private Type type;
 
-    public Attribute(String name, String def) {
+    public Attribute(Type type, String name, String def) {
         if (name == null) {
             throw new IllegalArgumentException("Attribute name cannot be null");
         }
         this.name = name;
         this.def = def;
+        this.type = type;
     }
 
-    public Attribute(String name) {
-        this(name, null);
-    }
 
     public String getName() {
         return name;
+    }
+
+    public Type getType() {
+        return type;
     }
 
     public String getDefault() {
@@ -44,6 +47,8 @@ public class Attribute {
 
         return name.equals(attribute.name);
     }
+
+
 
     @Override
     public int hashCode() {

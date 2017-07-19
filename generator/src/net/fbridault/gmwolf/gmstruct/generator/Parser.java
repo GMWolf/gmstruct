@@ -6,6 +6,7 @@ import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.AttributeContext;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.FileContext;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.StructContext;
+import net.fbridault.gmwolf.gmstruct.generator.type.Type;
 import org.antlr.v4.runtime.*;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.jgrapht.DirectedGraph;
@@ -15,7 +16,6 @@ import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import java.io.IOException;
-import java.util.*;
 
 /**
  * Created by felix on 01/07/2017.
@@ -107,14 +107,14 @@ public class Parser extends GMStructBaseListener{
             StructContext context = struct.getContext();
             for(AttributeContext attributeContext : context.attributeList().attribute()) {
                 String name = attributeContext.name.getText();
-                String def = null;
-                if (attributeContext.def != null) {
-                    def = attributeContext.def.getText();
-                }
+                Type type = attributeContext.type == null ? null :  Type.get(currentNameSpace, attributeContext.type.getText());
+                String def = attributeContext.def == null ? null : attributeContext.def.getText();
+
                 if (struct.hasAttribute(name)) {
                     throw new RuntimeException("Error at line " + context.getStart().getLine() +":\nAttribute already defined.");
                 }
-                struct.appendAttribute(new Attribute(name, def));
+
+                struct.appendAttribute(new Attribute(type, name, def));
             }
         });
 

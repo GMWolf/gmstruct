@@ -478,9 +478,13 @@ public class GMStructParser extends Parser {
 	}
 
 	public static class AttributeContext extends ParserRuleContext {
+		public Token type;
 		public Token name;
 		public ValueContext def;
-		public TerminalNode ID() { return getToken(GMStructParser.ID, 0); }
+		public List<TerminalNode> ID() { return getTokens(GMStructParser.ID); }
+		public TerminalNode ID(int i) {
+			return getToken(GMStructParser.ID, i);
+		}
 		public ValueContext value() {
 			return getRuleContext(ValueContext.class,0);
 		}
@@ -505,16 +509,26 @@ public class GMStructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(67);
-			((AttributeContext)_localctx).name = match(ID);
+			setState(68);
+			_errHandler.sync(this);
+			switch ( getInterpreter().adaptivePredict(_input,8,_ctx) ) {
+			case 1:
+				{
+				setState(67);
+				((AttributeContext)_localctx).type = match(ID);
+				}
+				break;
+			}
 			setState(70);
+			((AttributeContext)_localctx).name = match(ID);
+			setState(73);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			if (_la==T__7) {
 				{
-				setState(68);
+				setState(71);
 				match(T__7);
-				setState(69);
+				setState(72);
 				((AttributeContext)_localctx).def = value();
 				}
 			}
@@ -557,7 +571,7 @@ public class GMStructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(72);
+			setState(75);
 			_la = _input.LA(1);
 			if ( !((((_la) & ~0x3f) == 0 && ((1L << _la) & ((1L << STR) | (1L << ID) | (1L << NUM))) != 0)) ) {
 			_errHandler.recoverInline(this);
@@ -606,21 +620,21 @@ public class GMStructParser extends Parser {
 		try {
 			enterOuterAlt(_localctx, 1);
 			{
-			setState(74);
+			setState(77);
 			match(ID);
-			setState(79);
+			setState(82);
 			_errHandler.sync(this);
 			_la = _input.LA(1);
 			while (_la==T__8) {
 				{
 				{
-				setState(75);
+				setState(78);
 				match(T__8);
-				setState(76);
+				setState(79);
 				match(ID);
 				}
 				}
-				setState(81);
+				setState(84);
 				_errHandler.sync(this);
 				_la = _input.LA(1);
 			}
@@ -638,27 +652,28 @@ public class GMStructParser extends Parser {
 	}
 
 	public static final String _serializedATN =
-		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\17U\4\2\t\2\4\3\t"+
+		"\3\u608b\ua72a\u8133\ub9ed\u417c\u3be7\u7786\u5964\3\17X\4\2\t\2\4\3\t"+
 		"\3\4\4\t\4\4\5\t\5\4\6\t\6\4\7\t\7\4\b\t\b\4\t\t\t\4\n\t\n\3\2\3\2\3\2"+
 		"\7\2\30\n\2\f\2\16\2\33\13\2\3\3\3\3\3\3\3\3\3\3\7\3\"\n\3\f\3\16\3%\13"+
 		"\3\3\3\3\3\3\4\7\4*\n\4\f\4\16\4-\13\4\3\5\3\5\3\5\3\6\3\6\3\6\3\6\5\6"+
 		"\66\n\6\3\6\3\6\3\6\3\6\3\7\3\7\3\7\7\7?\n\7\f\7\16\7B\13\7\5\7D\n\7\3"+
-		"\b\3\b\3\b\5\bI\n\b\3\t\3\t\3\n\3\n\3\n\7\nP\n\n\f\n\16\nS\13\n\3\n\2"+
-		"\2\13\2\4\6\b\n\f\16\20\22\2\3\3\2\f\16\2U\2\24\3\2\2\2\4\34\3\2\2\2\6"+
-		"+\3\2\2\2\b.\3\2\2\2\n\61\3\2\2\2\fC\3\2\2\2\16E\3\2\2\2\20J\3\2\2\2\22"+
-		"L\3\2\2\2\24\31\5\6\4\2\25\30\5\n\6\2\26\30\5\4\3\2\27\25\3\2\2\2\27\26"+
-		"\3\2\2\2\30\33\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32\3\3\2\2\2\33\31"+
-		"\3\2\2\2\34\35\7\3\2\2\35\36\7\r\2\2\36#\7\4\2\2\37\"\5\n\6\2 \"\5\4\3"+
-		"\2!\37\3\2\2\2! \3\2\2\2\"%\3\2\2\2#!\3\2\2\2#$\3\2\2\2$&\3\2\2\2%#\3"+
-		"\2\2\2&\'\7\5\2\2\'\5\3\2\2\2(*\5\b\5\2)(\3\2\2\2*-\3\2\2\2+)\3\2\2\2"+
-		"+,\3\2\2\2,\7\3\2\2\2-+\3\2\2\2./\7\6\2\2/\60\7\f\2\2\60\t\3\2\2\2\61"+
-		"\62\7\7\2\2\62\65\7\r\2\2\63\64\7\b\2\2\64\66\5\22\n\2\65\63\3\2\2\2\65"+
-		"\66\3\2\2\2\66\67\3\2\2\2\678\7\4\2\289\5\f\7\29:\7\5\2\2:\13\3\2\2\2"+
-		";@\5\16\b\2<=\7\t\2\2=?\5\16\b\2><\3\2\2\2?B\3\2\2\2@>\3\2\2\2@A\3\2\2"+
-		"\2AD\3\2\2\2B@\3\2\2\2C;\3\2\2\2CD\3\2\2\2D\r\3\2\2\2EH\7\r\2\2FG\7\n"+
-		"\2\2GI\5\20\t\2HF\3\2\2\2HI\3\2\2\2I\17\3\2\2\2JK\t\2\2\2K\21\3\2\2\2"+
-		"LQ\7\r\2\2MN\7\13\2\2NP\7\r\2\2OM\3\2\2\2PS\3\2\2\2QO\3\2\2\2QR\3\2\2"+
-		"\2R\23\3\2\2\2SQ\3\2\2\2\f\27\31!#+\65@CHQ";
+		"\b\5\bG\n\b\3\b\3\b\3\b\5\bL\n\b\3\t\3\t\3\n\3\n\3\n\7\nS\n\n\f\n\16\n"+
+		"V\13\n\3\n\2\2\13\2\4\6\b\n\f\16\20\22\2\3\3\2\f\16\2Y\2\24\3\2\2\2\4"+
+		"\34\3\2\2\2\6+\3\2\2\2\b.\3\2\2\2\n\61\3\2\2\2\fC\3\2\2\2\16F\3\2\2\2"+
+		"\20M\3\2\2\2\22O\3\2\2\2\24\31\5\6\4\2\25\30\5\n\6\2\26\30\5\4\3\2\27"+
+		"\25\3\2\2\2\27\26\3\2\2\2\30\33\3\2\2\2\31\27\3\2\2\2\31\32\3\2\2\2\32"+
+		"\3\3\2\2\2\33\31\3\2\2\2\34\35\7\3\2\2\35\36\7\r\2\2\36#\7\4\2\2\37\""+
+		"\5\n\6\2 \"\5\4\3\2!\37\3\2\2\2! \3\2\2\2\"%\3\2\2\2#!\3\2\2\2#$\3\2\2"+
+		"\2$&\3\2\2\2%#\3\2\2\2&\'\7\5\2\2\'\5\3\2\2\2(*\5\b\5\2)(\3\2\2\2*-\3"+
+		"\2\2\2+)\3\2\2\2+,\3\2\2\2,\7\3\2\2\2-+\3\2\2\2./\7\6\2\2/\60\7\f\2\2"+
+		"\60\t\3\2\2\2\61\62\7\7\2\2\62\65\7\r\2\2\63\64\7\b\2\2\64\66\5\22\n\2"+
+		"\65\63\3\2\2\2\65\66\3\2\2\2\66\67\3\2\2\2\678\7\4\2\289\5\f\7\29:\7\5"+
+		"\2\2:\13\3\2\2\2;@\5\16\b\2<=\7\t\2\2=?\5\16\b\2><\3\2\2\2?B\3\2\2\2@"+
+		">\3\2\2\2@A\3\2\2\2AD\3\2\2\2B@\3\2\2\2C;\3\2\2\2CD\3\2\2\2D\r\3\2\2\2"+
+		"EG\7\r\2\2FE\3\2\2\2FG\3\2\2\2GH\3\2\2\2HK\7\r\2\2IJ\7\n\2\2JL\5\20\t"+
+		"\2KI\3\2\2\2KL\3\2\2\2L\17\3\2\2\2MN\t\2\2\2N\21\3\2\2\2OT\7\r\2\2PQ\7"+
+		"\13\2\2QS\7\r\2\2RP\3\2\2\2SV\3\2\2\2TR\3\2\2\2TU\3\2\2\2U\23\3\2\2\2"+
+		"VT\3\2\2\2\r\27\31!#+\65@CFKT";
 	public static final ATN _ATN =
 		new ATNDeserializer().deserialize(_serializedATN.toCharArray());
 	static {
