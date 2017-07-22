@@ -116,6 +116,12 @@ public class Parser extends GMStructBaseListener{
 
                 struct.appendAttribute(new Attribute(type, name, def));
             }
+
+
+            //Append functions
+            for (GMStructParser.FunctionContext functionContext : struct.getContext().funtionList().function()) {
+                struct.addFunction(new Function(struct, functionContext));
+            }
         });
 
 
@@ -134,6 +140,8 @@ public class Parser extends GMStructBaseListener{
             throw new RuntimeException("Error at line " + ctx.getStart().getLine() + ":\nStruct " + name + " already defined!");
         }
         dependencies.addVertex(currentStruct);
+
+
     }
 
     @Override

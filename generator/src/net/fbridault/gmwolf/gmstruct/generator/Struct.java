@@ -19,6 +19,8 @@ public class Struct implements Iterable<Attribute>{
     private int[] flags;
     private int id;
 
+    private List<Function> functions;
+
     private NameSpace nameSpace;
 
     private GMStructParser.StructContext context;
@@ -30,6 +32,7 @@ public class Struct implements Iterable<Attribute>{
         attributes = new ArrayList<>();
         this.parent = parent;
         this.nameSpace = nameSpace;
+        functions = new ArrayList<>();
     }
 
     public Struct(NameSpace nameSpace, int id, String name) {
@@ -43,6 +46,10 @@ public class Struct implements Iterable<Attribute>{
 
     public GMStructParser.StructContext getContext() {
         return context;
+    }
+
+    public void addFunction(Function function) {
+        functions.add(function);
     }
 
     //region struct stuff
@@ -107,6 +114,10 @@ public class Struct implements Iterable<Attribute>{
 
     public int getAttributePos(Attribute attribute) {
         return attributes.indexOf(attribute);
+    }
+
+    public int getAttributePos(String name) {
+        return  getAttributePos(getAttribute(name));
     }
 
     public boolean hasAttribute(String name) {
@@ -206,7 +217,7 @@ public class Struct implements Iterable<Attribute>{
                     .append("\t\tshow_error(\"Argument is not of type "+ attribute.getType() +"\", true);\n")
                     .append("\t}\n");
         }
-                script.append("\ts[@ ").append(index).append("] = argument[1];\n")
+        script.append("\ts[@ ").append(index).append("] = argument[1];\n")
                 .append("}\n")
                 .append("return s[").append(index).append("];");
 
@@ -237,6 +248,10 @@ public class Struct implements Iterable<Attribute>{
         scripts.add(getIs());
         for(Attribute attribute : this) {
             scripts.add(getGetSetter(attribute));
+        }
+
+        for(Function function : functions) {
+            scripts.add(function.getScript());
         }
 
         return scripts;

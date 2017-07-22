@@ -1,6 +1,7 @@
 package net.fbridault.gmwolf.gmstruct.generator;
 
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser;
+import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.IdContext;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.StructPathContext;
 import org.antlr.v4.runtime.tree.TerminalNode;
 
@@ -19,7 +20,7 @@ public class StructPath {
 
     public StructPath(StructPathContext context) {
         this();
-        for(TerminalNode node : context.ID()) {
+        for(IdContext node : context.id()) {
             parts.add(node.getText());
         }
     }
