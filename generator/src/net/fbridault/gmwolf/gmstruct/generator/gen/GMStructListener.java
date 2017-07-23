@@ -178,18 +178,6 @@ public interface GMStructListener extends ParseTreeListener {
 	 */
 	void exitIfStat(GMStructParser.IfStatContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code dotExpr}
-	 * labeled alternative in {@link GMStructParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void enterDotExpr(GMStructParser.DotExprContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code dotExpr}
-	 * labeled alternative in {@link GMStructParser#expr}.
-	 * @param ctx the parse tree
-	 */
-	void exitDotExpr(GMStructParser.DotExprContext ctx);
-	/**
 	 * Enter a parse tree produced by the {@code eqExpr}
 	 * labeled alternative in {@link GMStructParser#expr}.
 	 * @param ctx the parse tree
@@ -201,6 +189,18 @@ public interface GMStructListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitEqExpr(GMStructParser.EqExprContext ctx);
+	/**
+	 * Enter a parse tree produced by the {@code dotExpr}
+	 * labeled alternative in {@link GMStructParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterDotExpr(GMStructParser.DotExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code dotExpr}
+	 * labeled alternative in {@link GMStructParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitDotExpr(GMStructParser.DotExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code addExpr}
 	 * labeled alternative in {@link GMStructParser#expr}.
@@ -359,6 +359,26 @@ public interface GMStructListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitId(GMStructParser.IdContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GMStructParser#num}.
+	 * @param ctx the parse tree
+	 */
+	void enterNum(GMStructParser.NumContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GMStructParser#num}.
+	 * @param ctx the parse tree
+	 */
+	void exitNum(GMStructParser.NumContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link GMStructParser#str}.
+	 * @param ctx the parse tree
+	 */
+	void enterStr(GMStructParser.StrContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link GMStructParser#str}.
+	 * @param ctx the parse tree
+	 */
+	void exitStr(GMStructParser.StrContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link GMStructParser#structPath}.
 	 * @param ctx the parse tree

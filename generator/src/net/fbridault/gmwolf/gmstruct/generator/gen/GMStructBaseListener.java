@@ -220,18 +220,6 @@ public class GMStructBaseListener implements GMStructListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDotExpr(GMStructParser.DotExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitDotExpr(GMStructParser.DotExprContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
 	@Override public void enterEqExpr(GMStructParser.EqExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -239,6 +227,18 @@ public class GMStructBaseListener implements GMStructListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitEqExpr(GMStructParser.EqExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterDotExpr(GMStructParser.DotExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDotExpr(GMStructParser.DotExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -407,6 +407,30 @@ public class GMStructBaseListener implements GMStructListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitId(GMStructParser.IdContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNum(GMStructParser.NumContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNum(GMStructParser.NumContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterStr(GMStructParser.StrContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitStr(GMStructParser.StrContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

@@ -20,7 +20,7 @@ attribute : (type=id)? name=id  ('=' def=expr)?;
 
 funtionList : function*;
 
-function : name=id '(' idList? ')' block;
+function : (type=id)? name=id '(' idList? ')' block;
 
 idList : id ( ',' id)*;
 
@@ -38,33 +38,37 @@ ret : 'return' expr?;
 
 assignment : 'var'? id ('['value']')? ('=' | '*=' | '/=' | '+=' | '/=') expr;
 
-functionCall : id '(' exprList? ')';
+functionCall : name=id '(' exprList? ')';
 
 exprList : expr ( ',' expr)*;
 
 ifStat: 'if' expr stat ('else' stat)?;
 
-expr : expr '.' expr #dotExpr
-     | expr '*' expr #mulExpr
-     | expr '/' expr #divExpr
-     | expr '+' expr #addExpr
-     | expr '-' expr #subExpr
-     | expr '||' expr #orExpr
-     | expr '&&' expr #andExpr
-     | expr '==' expr #eqExpr
-     | expr '!=' expr #neqExpr
+expr : expr '.' id #dotExpr
+     | l=expr '*' r=expr #mulExpr
+     | l=expr '/' r=expr #divExpr
+     | l=expr '+' r=expr #addExpr
+     | l=expr '-' r=expr #subExpr
+     | l=expr '||' r=expr #orExpr
+     | l=expr '&&' r=expr #andExpr
+     | l=expr '==' r=expr #eqExpr
+     | l=expr '!=' r=expr #neqExpr
      | value #valExpr
      | '(' expr ')' #parenExpr;
 
 constructor: 'new' id'(' exprList ')';
 
-value : NUM | id | STR | functionCall | arrayLiteral | arrayAccess | constructor;
+value : num | id | str | functionCall | arrayLiteral | arrayAccess | constructor;
 
 arrayLiteral: '[' (value (',' value)*)? ']';
 
 arrayAccess: id '[' NUM ']';
 
 id: ID;
+
+num : NUM;
+
+str : STR;
 
 structPath : id ('.' id)*;
 

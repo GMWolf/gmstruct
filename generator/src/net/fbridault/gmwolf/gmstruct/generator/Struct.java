@@ -19,7 +19,7 @@ public class Struct implements Iterable<Attribute>{
     private int[] flags;
     private int id;
 
-    private List<Function> functions;
+    private Map<String,Function> functions;
 
     private NameSpace nameSpace;
 
@@ -32,7 +32,7 @@ public class Struct implements Iterable<Attribute>{
         attributes = new ArrayList<>();
         this.parent = parent;
         this.nameSpace = nameSpace;
-        functions = new ArrayList<>();
+        functions = new HashMap<>();
     }
 
     public Struct(NameSpace nameSpace, int id, String name) {
@@ -49,7 +49,7 @@ public class Struct implements Iterable<Attribute>{
     }
 
     public void addFunction(Function function) {
-        functions.add(function);
+        functions.put(function.name, function);
     }
 
     //region struct stuff
@@ -147,6 +147,14 @@ public class Struct implements Iterable<Attribute>{
      */
     public Struct getParent() {
         return parent;
+    }
+
+    public Function getFunction(String name) {
+        return functions.get(name);
+    }
+
+    public boolean hasFunction(String name) {
+        return functions.containsKey(name);
     }
 
     /**
@@ -250,7 +258,7 @@ public class Struct implements Iterable<Attribute>{
             scripts.add(getGetSetter(attribute));
         }
 
-        for(Function function : functions) {
+        for(Function function : functions.values()) {
             scripts.add(function.getScript());
         }
 

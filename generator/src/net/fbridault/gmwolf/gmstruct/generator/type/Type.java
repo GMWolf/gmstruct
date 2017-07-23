@@ -9,14 +9,19 @@ import java.util.Map;
 /**
  * Created by felix on 17/07/2017.
  */
-public interface Type {
+public abstract class Type {
 
     // region GM types
 
-    final static Type STRING = new Type() {
+    public final static Type STRING = new Type() {
         @Override
         public String getChecker() {
             return "is_string({0})";
+        }
+
+        @Override
+        public Type getTypeAdd(Type other) {
+            return Type.STRING;
         }
 
         @Override
@@ -25,10 +30,46 @@ public interface Type {
         }
     };
 
-    final static Type REAL = new Type() {
+    public final static Type REAL = new Type() {
         @Override
         public String getChecker() {
             return "is_real({0})";
+        }
+
+        @Override
+        public Type getTypeAdd(Type other) {
+            if (other.equals(Type.REAL)) {
+                return Type.REAL;
+            } else {
+                return super.getTypeAdd(other);
+            }
+        }
+
+        @Override
+        public Type getTypeSub(Type other) {
+            if (other.equals(Type.REAL)) {
+                return Type.REAL;
+            } else {
+                return super.getTypeSub(other);
+            }
+        }
+
+        @Override
+        public Type getTypeMul(Type other) {
+            if (other.equals(Type.REAL)) {
+                return Type.REAL;
+            } else {
+                return super.getTypeMul(other);
+            }
+        }
+
+        @Override
+        public Type getTypeDiv(Type other) {
+            if (other.equals(Type.REAL)) {
+                return Type.REAL;
+            } else {
+                return super.getTypeDiv(other);
+            }
         }
 
         @Override
@@ -37,7 +78,7 @@ public interface Type {
         }
     };
 
-    final static Type POINTER = new Type() {
+    public final static Type POINTER = new Type() {
         @Override
         public String getChecker() {
             return "is_pointer({0})";
@@ -49,7 +90,7 @@ public interface Type {
         }
     };
 
-    final static Type ARRAY = new Type() {
+    public final static Type ARRAY = new Type() {
         @Override
         public String getChecker() {
             return "is_array({0})";
@@ -58,6 +99,18 @@ public interface Type {
         @Override
         public String toString() {
             return "array";
+        }
+    };
+
+    public final static Type BOOLEAN = new Type() {
+        @Override
+        public String getChecker() {
+            return "is_bool({0})";
+        }
+
+        @Override
+        public String toString() {
+            return "boolean";
         }
     };
 
@@ -71,7 +124,7 @@ public interface Type {
      * @param name
      * @return
      */
-    static Type get(NameSpace nameSpace, String name) {
+    public static Type get(NameSpace nameSpace, String name) {
         switch (name) {
             case "string": return STRING;
             case "real" : return REAL;
@@ -89,5 +142,21 @@ public interface Type {
 
 
 
-    String getChecker();
+    public abstract String getChecker();
+
+    public Type getTypeAdd(Type other) {
+        return null;
+    }
+
+    public Type getTypeSub(Type other) {
+        return null;
+    }
+
+    public Type getTypeMul(Type other) {
+        return null;
+    }
+
+    public Type getTypeDiv(Type other) {
+        return null;
+    }
 }
