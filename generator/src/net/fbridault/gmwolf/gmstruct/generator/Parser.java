@@ -119,6 +119,7 @@ public class Parser extends GMStructBaseListener{
 
 
             //Append functions
+            if (struct.getContext().funtionList() != null)
             for (GMStructParser.FunctionContext functionContext : struct.getContext().funtionList().function()) {
                 struct.addFunction(new Function(struct, functionContext));
             }
