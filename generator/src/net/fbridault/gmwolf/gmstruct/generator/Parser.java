@@ -77,14 +77,14 @@ public class Parser extends GMStructBaseListener{
                 StructPath parentPath = new StructPath(context.parent);
                 Struct parent = struct.getNameSpace().findStruct(parentPath);
                 if (parent == null) { //unknown parent
-                    throw  new RuntimeException("Error at line " + context.getStart().getLine() + ":\nUnknown struct " + context.parent.getText() + ".");
+                    throw  new GMSException(context, ":\nUnknown struct " + context.parent.getText() + ".");
                 }
                 struct.setParent(parent);
                 dependencies.addEdge(parent, struct);
 
                 //Check for dependency cycle
                 if (cycleDetector.detectCyclesContainingVertex(struct)) {
-                    throw new RuntimeException("Error ar line " + context.getStart().getLine() + ":\nDependency cycle detected with struct " + struct.getName());
+                    throw new GMSException(context, ":\nDependency cycle detected with struct " + struct.getName());
                 }
             }
         });
@@ -111,7 +111,7 @@ public class Parser extends GMStructBaseListener{
                 String def = attributeContext.def == null ? null : attributeContext.def.getText();
 
                 if (struct.hasAttribute(name)) {
-                    throw new RuntimeException("Error at line " + context.getStart().getLine() +":\nAttribute already defined.");
+                    throw new GMSException(context, ":\nAttribute already defined.");
                 }
 
                 struct.appendAttribute(new Attribute(type, name, def));
@@ -138,7 +138,7 @@ public class Parser extends GMStructBaseListener{
         currentStruct = new Struct(currentNameSpace, id, ctx);
 
         if (currentNameSpace.addStruct(currentStruct)) {
-            throw new RuntimeException("Error at line " + ctx.getStart().getLine() + ":\nStruct " + name + " already defined!");
+            throw new GMSException(ctx, ":\nStruct " + name + " already defined!");
         }
         dependencies.addVertex(currentStruct);
 

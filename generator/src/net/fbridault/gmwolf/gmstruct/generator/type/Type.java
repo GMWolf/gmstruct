@@ -28,6 +28,11 @@ public abstract class Type {
         public String toString() {
             return "string";
         }
+
+        @Override
+        public boolean assignsTo(Type type) {
+            return type.equals(STRING);
+        }
     };
 
     public final static Type REAL = new Type() {
@@ -40,9 +45,12 @@ public abstract class Type {
         public Type getTypeAdd(Type other) {
             if (other.equals(Type.REAL)) {
                 return Type.REAL;
+            } else  if (other.equals(Type.STRING)) {
+                return super.getTypeAdd(other);
             } else {
                 return super.getTypeAdd(other);
             }
+
         }
 
         @Override
@@ -76,6 +84,11 @@ public abstract class Type {
         public String toString() {
             return "real";
         }
+
+        @Override
+        public boolean assignsTo(Type type) {
+            return type.equals(REAL);
+        }
     };
 
     public final static Type POINTER = new Type() {
@@ -87,6 +100,11 @@ public abstract class Type {
         @Override
         public String toString() {
             return "pointer";
+        }
+
+        @Override
+        public boolean assignsTo(Type type) {
+            return type.equals(POINTER);
         }
     };
 
@@ -100,6 +118,20 @@ public abstract class Type {
         public String toString() {
             return "array";
         }
+
+        @Override
+        public boolean assignsTo(Type type) {
+            return type.equals(ARRAY);
+        }
+
+        @Override
+        public Type getTypeAdd(Type other) {
+            if (other.equals(STRING)) {
+                return STRING;
+            }
+
+            return super.getTypeAdd(other);
+        }
     };
 
     public final static Type BOOLEAN = new Type() {
@@ -112,11 +144,14 @@ public abstract class Type {
         public String toString() {
             return "boolean";
         }
+
+        @Override
+        public boolean assignsTo(Type type) {
+            return type.equals(BOOLEAN);
+        }
     };
 
     //endregion
-
-    static Map<String, Type> types = new HashMap<>();
 
     /**
      * Finds the type from a string for the given parser object
@@ -132,15 +167,16 @@ public abstract class Type {
             case "array" : return ARRAY;
         }
 
-        if (!types.containsKey(name)) {
-            types.put(name, new StructType(nameSpace.getStruct(name)));
-        }
-
-        return types.get(name);
+        return StructType.get(nameSpace.getStruct(name));
     }
 
 
-
+    /**
+     * Checks if a value of this type can be assigned to a variable of the given type
+     * @param type
+     * @return
+     */
+    public abstract boolean assignsTo(Type type);
 
     public abstract String getChecker();
 

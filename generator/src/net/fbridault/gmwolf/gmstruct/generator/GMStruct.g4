@@ -27,6 +27,7 @@ idList : id ( ',' id)*;
 block: '{' stat* '}';
 
 stat: block
+    | declaration ';'
     | assignment ';'
     | functionCall ';'
     | ifStat
@@ -36,7 +37,9 @@ stat: block
 
 ret : 'return' expr?;
 
-assignment : 'var'? id ('['value']')? ('=' | '*=' | '/=' | '+=' | '/=') expr;
+declaration : ('var' | type=id) name=id '=' expr;
+
+assignment : id ('['value']')? ('=' | '*=' | '/=' | '+=' | '/=') expr;
 
 functionCall : name=id '(' exprList? ')';
 
@@ -44,7 +47,7 @@ exprList : expr ( ',' expr)*;
 
 ifStat: 'if' expr stat ('else' stat)?;
 
-expr : expr '.' id #dotExpr
+expr : l=expr '.' r=expr #dotExpr
      | l=expr '*' r=expr #mulExpr
      | l=expr '/' r=expr #divExpr
      | l=expr '+' r=expr #addExpr
@@ -56,13 +59,17 @@ expr : expr '.' id #dotExpr
      | value #valExpr
      | '(' expr ')' #parenExpr;
 
-constructor: 'new' id'(' exprList ')';
+constructor: 'new' id'(' exprList? ')';
 
-value : num | id | str | functionCall | arrayLiteral | arrayAccess | constructor;
+value : num #valNum
+      | id #valVar
+      | str #valStr
+      | functionCall #valFunction
+      | arrayLiteral #valArray
+      | constructor #valConstruct;
 
 arrayLiteral: '[' (value (',' value)*)? ']';
 
-arrayAccess: id '[' NUM ']';
 
 id: ID;
 
