@@ -1,8 +1,8 @@
 package net.fbridault.gmwolf.gmstruct.generator;
 
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser;
+import net.fbridault.gmwolf.gmstruct.generator.ir.Script;
 
-import javax.print.attribute.standard.MediaSize;
 import java.util.*;
 
 /**

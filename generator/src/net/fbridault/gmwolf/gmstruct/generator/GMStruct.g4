@@ -39,7 +39,13 @@ ret : 'return' expr?;
 
 declaration : ('var' | type=id) name=id '=' expr;
 
-assignment : id ('['value']')? ('=' | '*=' | '/=' | '+=' | '/=') expr;
+assignment : variable ('=' | '*=' | '/=' | '+=' | '/=') expr;
+
+variable : var #varId
+         | (expr '.') id #varDot
+         | variable '['value']' #varArray;
+
+var : id;
 
 functionCall : name=id '(' exprList? ')';
 
@@ -47,7 +53,7 @@ exprList : expr ( ',' expr)*;
 
 ifStat: 'if' expr stat ('else' stat)?;
 
-expr : l=expr '.' r=expr #dotExpr
+expr : l=expr '.' r=value #dotExpr
      | l=expr '*' r=expr #mulExpr
      | l=expr '/' r=expr #divExpr
      | l=expr '+' r=expr #addExpr

@@ -1,12 +1,12 @@
 package net.fbridault.gmwolf.gmstruct.gui;
 
 import net.fbridault.gmwolf.gmstruct.generator.*;
+import net.fbridault.gmwolf.gmstruct.generator.ir.Script;
 
 import javax.swing.*;
 import java.io.File;
 import java.io.IOException;
 import java.util.List;
-import java.util.Set;
 import java.util.prefs.Preferences;
 
 /**

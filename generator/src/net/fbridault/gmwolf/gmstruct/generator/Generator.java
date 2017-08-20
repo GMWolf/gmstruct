@@ -1,5 +1,7 @@
 package net.fbridault.gmwolf.gmstruct.generator;
 
+import net.fbridault.gmwolf.gmstruct.generator.ir.Script;
+
 import java.io.IOException;
 import java.util.*;
 

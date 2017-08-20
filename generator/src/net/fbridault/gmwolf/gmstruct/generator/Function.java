@@ -1,14 +1,15 @@
 package net.fbridault.gmwolf.gmstruct.generator;
 
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructBaseListener;
-import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructBaseVisitor;
-import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructLexer;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser;
 import net.fbridault.gmwolf.gmstruct.generator.gen.GMStructParser.FunctionContext;
+import net.fbridault.gmwolf.gmstruct.generator.ir.Script;
 import net.fbridault.gmwolf.gmstruct.generator.type.StructType;
 import net.fbridault.gmwolf.gmstruct.generator.type.Type;
+import org.antlr.v4.runtime.ParserRuleContext;
+import org.antlr.v4.runtime.tree.ParseTree;
+import org.antlr.v4.runtime.tree.ParseTreeProperty;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.TerminalNode;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,15 +62,64 @@ public class Function {
         ParseTreeWalker walker = new ParseTreeWalker();
         walker.walk(new StaticAnalyzer(), context.block());
 
-        walker.walk(new GMStructBaseListener() {
-            @Override
-            public void visitTerminal(TerminalNode node) {
+        //walker.walk(new ScriptWriter(script), context.block());
+
+        return script;
+    }
+
+    class ScriptWriter extends GMStructBaseListener {
+        Script script;
+        ParserRuleContext block;
+
+        ParseTreeProperty<String> gml;
+
+        public ScriptWriter(Script script) {
+            this.script = script;
+            block = null;
+        }
+
+        @Override
+        public void exitDeclaration(DeclarationContext ctx) {
+            script.append(ctx.name).append("=").append(gml.get(ctx));
+        }
+
+        @Override
+        public void exitValNum(ValNumContext ctx) {
+            gml.put(ctx, ctx.getText());
+        }
+
+        @Override
+        public void exitValVar(ValVarContext ctx) {
+            gml.put(ctx, ctx.getText());
+        }
+
+        @Override
+        public void exitValStr(ValStrContext ctx) {
+            gml.put(ctx, ctx.getText());
+        }
+
+        @Override
+        public void exitValExpr(ValExprContext ctx) {
+            gml.put(ctx, gml.get(ctx.value()));
+        }
+
+
+        /* @Override
+        public void exitEveryRule(ParserRuleContext ctx) {
+            if (block == ctx) {
+                block = null;
+            }
+        }*/
+
+       /* @Override
+        public void visitTerminal(TerminalNode node) {
+            if (block == null) {
                 //Check for replacements id ID
                 if (node.getSymbol().getType() == GMStructLexer.ID) {
                     if (struct.hasAttribute(node.getText())) { //is a struct attribute
-                        script.append("argument0[").append(struct.getAttributePos(node.getText())+1).append("]");
+                        script.append("argument0[").append(struct.getAttributePos(node.getText()) + 1).append("]");
                     } else if (args.contains(node.getText())) {  //Is an argument?
-                        script.append("argument").append(args.indexOf(node.getText())+1);
+                        script.append("argument").append(args.indexOf(node.getText()) + 1);
                     } else if (GML_VAR_NAMES.contains(node.getText())) { //is build int var?
                         script.append("_").append(node.getText());
                     } else {
@@ -79,27 +129,20 @@ public class Function {
                     script.append(node.getText());
                 }
             }
+        }*/
 
-            @Override
-            public void exitStat(StatContext ctx) {
-                script.append("\n");
-            }
-
-            @Override
-            public void enterDotExpr(DotExprContext ctx) {
-                super.enterDotExpr(ctx);
-            }
-        }, context.block());
-
-        return script;
+        @Override
+        public void exitStat(StatContext ctx) {
+            script.append("\n");
+        }
     }
 
 
     class StaticAnalyzer extends GMStructBaseListener {
 
-        ExprTypeVisitor typeVisitor = new ExprTypeVisitor();
-
+        ParseTreeProperty<ParseTree> contextProperty = new ParseTreeProperty<>();
         Map<String, Type> varTypes = new HashMap<>();
+        ParseTreeProperty<Type> types = new ParseTreeProperty<>();
 
         @Override
         public void exitDeclaration(DeclarationContext ctx) {
@@ -111,205 +154,220 @@ public class Function {
             if (ctx.type != null) {
                 Type t = Type.get(struct.getNameSpace(), ctx.type.getText());
                 varTypes.put(ctx.name.getText(), t);
-                Type exprType = typeVisitor.visit(ctx.expr());
+                Type exprType = types.get(ctx.expr());
                 if (!exprType.assignsTo(t)) {
                     throw new GMSException(ctx, "Cannot assign " + exprType + " to " + t + ".");
                 }
             } else {
-                varTypes.put(ctx.name.getText(), typeVisitor.visit(ctx.expr()));
+                varTypes.put(ctx.name.getText(), types.get(ctx.expr()));
             }
         }
 
         @Override
         public void exitAssignment(AssignmentContext ctx) {
-            if (!varTypes.containsKey(ctx.id().getText())) {
-                throw new GMSException(ctx, "Unknown variable " + ctx.id().getText() + ".");
-            }
 
-            Type varType = varTypes.get(ctx.id().getText());
-            Type exprType = typeVisitor.visit(ctx.value());
+            Type varType = types.get(ctx.variable());
+            Type exprType = types.get(ctx.expr());
             if (!exprType.assignsTo(varType)) {
                 throw new GMSException(ctx, "Cannot assign " + exprType + " to " + varType + ".");
             }
         }
 
-
-
-        class ExprTypeVisitor extends GMStructBaseVisitor<Type> {
-
-            Type typeContext = null;
-
-            @Override
-            public Type visitDotExpr(DotExprContext ctx) {
-                typeContext = visit(ctx.l);
-                Type type =  visit(ctx.r);
-                typeContext = null;
-                return type;
+        @Override
+        public void exitVarId(VarIdContext ctx) {
+            if (!varTypes.containsKey(ctx.var().getText())) {
+                throw new GMSException(ctx, "Unknown variable " + ctx.var().getText() + ".");
             }
 
-            //region value
+            types.put(ctx, varTypes.get(ctx.var().getText()));
+        }
 
-            @Override
-            public Type visitValNum(ValNumContext ctx) {
-                return Type.REAL;
-            }
+        @Override
+        public void exitVar(VarContext ctx) {
 
-            @Override
-            public Type visitValVar(ValVarContext ctx) {
-                if (typeContext != null) {
-                    Struct structContext = ((StructType) typeContext).getStruct();
-                    if (structContext.hasAttribute(ctx.id().getText())) {
-                        return structContext.getAttribute(ctx.id().getText()).getType();
-                    } else {
-                        throw new GMSException(ctx, "Unknown attribute " + struct.getName() + "." + ctx.id().getText());
-                    }
-                }
+        }
 
-                if (varTypes.containsKey(ctx.id().getText())) {
-                    return varTypes.get(ctx.id().getText());
+        @Override
+        public void enterVarDot(VarDotContext ctx) {
+            contextProperty.put(ctx.id(), ctx.expr());
+        }
+
+        @Override
+        public void exitVarDot(VarDotContext ctx) {
+            super.exitVarDot(ctx);
+        }
+
+        @Override
+        public void enterDotExpr(DotExprContext ctx) {
+            contextProperty.put(ctx.r, ctx.l);
+        }
+
+        @Override
+        public void exitDotExpr(DotExprContext ctx) {
+            types.put(ctx, types.get(ctx.r));
+        }
+
+        //region value
+
+        @Override
+        public void exitValNum(ValNumContext ctx) {
+            types.put(ctx, Type.REAL);
+        }
+
+        @Override
+        public void exitValVar(ValVarContext ctx) {
+            String name = ctx.getText();
+            ParseTree context = contextProperty.get(ctx);
+            if (context != null) {
+                Struct structContext = ((StructType) types.get(context)).getStruct();
+                if (structContext.hasAttribute(ctx.id().getText())) {
+                    Type type = structContext.getAttribute(name).getType();
+                    types.put(ctx, type);
                 } else {
-                    throw new GMSException(ctx, "Unknown variable " + ctx.id().getText());
+                    throw new GMSException(ctx, "Unknown attribute " + struct.getName() + "." + ctx.id().getText());
                 }
+            } else if (varTypes.containsKey(ctx.id().getText())) {
+                Type type = varTypes.get(ctx.id().getText());
+                types.put(ctx, type);
+            } else {
+                throw new GMSException(ctx, "Unknown variable " + ctx.id().getText());
             }
+        }
 
-            @Override
-            public Type visitValStr(ValStrContext ctx) {
-                return Type.STRING;
+        @Override
+        public void exitValStr(ValStrContext ctx) {
+            types.put(ctx, Type.STRING);
+        }
+
+        @Override
+        public void exitValFunction(ValFunctionContext ctx) {
+            String name = ctx.functionCall().name.getText();
+            Struct structContext = context == null ? StructType.get(struct).getStruct() : ((StructType) types.get(context)).getStruct();
+            if (structContext.hasFunction(ctx.functionCall().name.getText())) {
+                Type type = structContext.getFunction(name).type;
+                types.put(ctx, type);
             }
+            throw new GMSException(ctx, "Unknown function " + context + "." + ctx.functionCall().name.getText());
+        }
 
-            @Override
-            public Type visitValFunction(ValFunctionContext ctx) {
+        @Override
+        public void exitValArray(ValArrayContext ctx) {
+            types.put(ctx, Type.ARRAY);
+        }
 
-                Struct structContext = typeContext == null ? StructType.get(struct).getStruct() : ((StructType) typeContext).getStruct();
-                if (structContext.hasFunction(ctx.functionCall().name.getText())) {
-                    return structContext.getFunction(ctx.functionCall().name.getText()).type;
-                }
-                throw new GMSException(ctx, "Unknown function " + typeContext + "." + ctx.functionCall().name.getText());
+        @Override
+        public void exitValConstruct(ValConstructContext ctx) {
+            String name = ctx.constructor().id().getText();
+            Type type = Type.get(struct.getNameSpace(), name);
+            types.put(ctx, type);
+        }
+
+
+
+        //endregion
+
+        @Override
+        public void exitValExpr(ValExprContext ctx) {
+            types.put(ctx, types.get(ctx.value()));
+        }
+
+        @Override
+        public void exitNum(NumContext ctx) {
+            types.put(ctx, Type.REAL);
+        }
+
+        @Override
+        public void exitStr(StrContext ctx) {
+            types.put(ctx, Type.STRING);
+        }
+
+        @Override
+        public void exitId(IdContext ctx) {
+            super.exitId(ctx);
+        }
+
+        @Override
+        public void exitFunctionCall(FunctionCallContext ctx) {
+            if (!struct.hasFunction(name)) {
+                throw new RuntimeException("Unknown function " + ctx.name.getText());
             }
+            Type type = struct.getFunction(ctx.name.getText()).type;
+            types.put(ctx, type);
+        }
 
-            @Override
-            public Type visitValArray(ValArrayContext ctx) {
-                return Type.ARRAY;
+        @Override
+        public void exitEqExpr(EqExprContext ctx) {
+            types.put(ctx, Type.BOOLEAN);
+        }
+
+        @Override
+        public void exitAddExpr(AddExprContext ctx) {
+            Type lt = types.get(ctx.l);
+            Type rt = types.get(ctx.r);
+            Type type = lt.getTypeAdd(rt);
+            types.put(ctx, type);
+        }
+
+        @Override
+        public void exitSubExpr(SubExprContext ctx) {
+            Type lt = types.get(ctx.l);
+            Type rt = types.get(ctx.r);
+            types.put(ctx, lt.getTypeSub(rt));
+        }
+
+        @Override
+        public void exitDivExpr(DivExprContext ctx) {
+            Type lt = types.get(ctx.l);
+            Type rt = types.get(ctx.r);
+            types.put(ctx, lt.getTypeDiv(rt));
+        }
+
+        @Override
+        public void exitMulExpr(MulExprContext ctx) {
+            Type lt = types.get(ctx.l);
+            Type rt = types.get(ctx.r);
+            Type t = lt.getTypeMul(rt);
+            if (t == null ) {
+                throw new GMSException(ctx, "Cannot use Multiply operator on " + lt + " and " + rt);
             }
+            types.put(ctx, t);
+        }
 
-            @Override
-            public Type visitValConstruct(ValConstructContext ctx) {
-                return Type.get(struct.getNameSpace(), ctx.constructor().id().getText());
+        @Override
+        public void exitAndExpr(AndExprContext ctx) {
+            Type lt = types.get(ctx.l);
+            Type rt = types.get(ctx.r);
+            if (lt.equals(Type.BOOLEAN) && rt.equals(Type.BOOLEAN)) {
+                types.put(ctx, Type.BOOLEAN);
+            } else {
+                throw new GMSException(ctx, ". Boolean operator on non boolean varTypes");
             }
+        }
 
-
-
-            //endregion
-
-            @Override
-            public Type visitValExpr(ValExprContext ctx) {
-                return visit(ctx.value());
+        @Override
+        public void exitOrExpr(OrExprContext ctx) {
+            Type lt = types.get(ctx.l);
+            Type rt = types.get(ctx.r);
+            if (lt.equals(Type.BOOLEAN) && rt.equals(Type.BOOLEAN)) {
+                types.put(ctx, Type.BOOLEAN);
+            } else {
+                throw new GMSException(ctx, "Boolean operator on non boolean varTypes.");
             }
+        }
 
-            @Override
-            public Type visitNum(NumContext ctx) {
-                return Type.REAL;
-            }
+        @Override
+        public void exitParenExpr(ParenExprContext ctx) {
+            types.put(ctx, types.get(ctx.expr()));
+        }
 
-            @Override
-            public Type visitStr(StrContext ctx) {
-                return Type.STRING;
-            }
+        @Override
+        public void exitNeqExpr(NeqExprContext ctx) {
+            types.put(ctx, Type.BOOLEAN);
+        }
 
-            @Override
-            public Type visitId(IdContext ctx) {
-                return super.visitId(ctx);
-            }
-
-            @Override
-            public Type visitFunctionCall(FunctionCallContext ctx) {
-                if (!struct.hasFunction(name)) {
-                    throw new RuntimeException("Unknown function " + ctx.name.getText());
-                }
-
-               return struct.getFunction(ctx.name.getText()).type;
-            }
-
-            @Override
-            public Type visitEqExpr(EqExprContext ctx) {
-                return Type.BOOLEAN;
-            }
-
-            @Override
-            public Type visitAddExpr(AddExprContext ctx) {
-                Type lt = visit(ctx.l);
-                Type rt = visit(ctx.r);
-
-                return lt.getTypeAdd(rt);
-            }
-
-            @Override
-            public Type visitSubExpr(SubExprContext ctx) {
-                Type lt = visit(ctx.l);
-                Type rt = visit(ctx.r);
-
-                return lt.getTypeSub(rt);
-
-            }
-
-            @Override
-            public Type visitDivExpr(DivExprContext ctx) {
-                Type lt = visit(ctx.l);
-                Type rt = visit(ctx.r);
-
-                return lt.getTypeDiv(rt);
-            }
-
-            @Override
-            public Type visitMulExpr(MulExprContext ctx) {
-                Type lt = visit(ctx.l);
-                Type rt = visit(ctx.r);
-
-                Type t = lt.getTypeMul(rt);
-                if (t == null ) {
-                    throw new GMSException(ctx, "Cannot use Multiply operator on " + lt + " and " + rt);
-                }
-                return t;
-            }
-
-            @Override
-            public Type visitAndExpr(AndExprContext ctx) {
-                Type lt = visit(ctx.l);
-                Type rt = visit(ctx.r);
-
-                if (lt.equals(Type.BOOLEAN) && rt.equals(Type.BOOLEAN)) {
-                    return  Type.REAL;
-                } else {
-                    throw new GMSException(ctx, ". Boolean operator on non boolean varTypes");
-                }
-            }
-
-            @Override
-            public Type visitOrExpr(OrExprContext ctx) {
-                Type lt = visit(ctx.l);
-                Type rt = visit(ctx.r);
-
-                if (lt.equals(Type.BOOLEAN) && rt.equals(Type.BOOLEAN)) {
-                    return Type.BOOLEAN;
-                } else {
-                    throw new GMSException(ctx, "Boolean operator on non boolean varTypes.");
-                }
-            }
-
-            @Override
-            public Type visitParenExpr(ParenExprContext ctx) {
-                return visit(ctx.expr());
-            }
-
-            @Override
-            public Type visitNeqExpr(NeqExprContext ctx) {
-                return Type.BOOLEAN;
-            }
-
-            @Override
-            public Type visitArrayLiteral(ArrayLiteralContext ctx) {
-               return Type.ARRAY;
-            }
+        @Override
+        public void exitArrayLiteral(ArrayLiteralContext ctx) {
+            types.put(ctx, Type.ARRAY);
         }
     }
 
