@@ -16,7 +16,14 @@ public class Main {
 
 
     public static void main(String[] args) {
-        new Main().run();
+        if (args.length >= 1 && args[0].equals("-cli")) {
+            if (args.length != 3) {
+                throw new RuntimeException("Must provide source and dest");
+            }
+            net.fbridault.gmwolf.gmstruct.generator.Main.main(new String[]{args[1], args[2]});
+        } else {
+            new Main().run();
+        }
     }
 
     public void run() {

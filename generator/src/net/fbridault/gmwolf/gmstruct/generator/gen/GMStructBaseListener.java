@@ -280,6 +280,18 @@ public class GMStructBaseListener implements GMStructListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
+	@Override public void enterDotExpr(GMStructParser.DotExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitDotExpr(GMStructParser.DotExprContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
 	@Override public void enterEqExpr(GMStructParser.EqExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
@@ -292,13 +304,13 @@ public class GMStructBaseListener implements GMStructListener {
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void enterDotExpr(GMStructParser.DotExprContext ctx) { }
+	@Override public void enterFuncExpr(GMStructParser.FuncExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
 	 * <p>The default implementation does nothing.</p>
 	 */
-	@Override public void exitDotExpr(GMStructParser.DotExprContext ctx) { }
+	@Override public void exitFuncExpr(GMStructParser.FuncExprContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
@@ -455,18 +467,6 @@ public class GMStructBaseListener implements GMStructListener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitValStr(GMStructParser.ValStrContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void enterValFunction(GMStructParser.ValFunctionContext ctx) { }
-	/**
-	 * {@inheritDoc}
-	 *
-	 * <p>The default implementation does nothing.</p>
-	 */
-	@Override public void exitValFunction(GMStructParser.ValFunctionContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *

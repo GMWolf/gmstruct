@@ -53,7 +53,7 @@ exprList : expr ( ',' expr)*;
 
 ifStat: 'if' expr stat ('else' stat)?;
 
-expr : l=expr '.' r=value #dotExpr
+expr : l=expr '.' r=expr #dotExpr
      | l=expr '*' r=expr #mulExpr
      | l=expr '/' r=expr #divExpr
      | l=expr '+' r=expr #addExpr
@@ -62,6 +62,7 @@ expr : l=expr '.' r=value #dotExpr
      | l=expr '&&' r=expr #andExpr
      | l=expr '==' r=expr #eqExpr
      | l=expr '!=' r=expr #neqExpr
+     | expr '(' exprList? ')' #funcExpr
      | value #valExpr
      | '(' expr ')' #parenExpr;
 
@@ -70,7 +71,6 @@ constructor: 'new' id'(' exprList? ')';
 value : num #valNum
       | id #valVar
       | str #valStr
-      | functionCall #valFunction
       | arrayLiteral #valArray
       | constructor #valConstruct;
 

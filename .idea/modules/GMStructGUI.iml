@@ -5,6 +5,7 @@
     <content url="file://$MODULE_DIR$/../../GMStructGUI">
       <excludeFolder url="file://$MODULE_DIR$/../../GMStructGUI/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../GMStructGUI/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../GMStructGUI/out" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

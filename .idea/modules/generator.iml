@@ -3,9 +3,9 @@
   <component name="NewModuleRootManager" inherit-compiler-output="true">
     <exclude-output />
     <content url="file://$MODULE_DIR$/../../generator">
-      <sourceFolder url="file://$MODULE_DIR$/../../generator/res" type="java-resource" />
       <excludeFolder url="file://$MODULE_DIR$/../../generator/.gradle" />
       <excludeFolder url="file://$MODULE_DIR$/../../generator/build" />
+      <excludeFolder url="file://$MODULE_DIR$/../../generator/out" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />

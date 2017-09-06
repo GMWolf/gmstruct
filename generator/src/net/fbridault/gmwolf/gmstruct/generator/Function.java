@@ -207,6 +207,11 @@ public class Function {
             types.put(ctx, types.get(ctx.r));
         }
 
+        @Override
+        public void exitFuncExpr(FuncExprContext ctx) {
+
+        }
+
         //region value
 
         @Override
@@ -239,7 +244,7 @@ public class Function {
             types.put(ctx, Type.STRING);
         }
 
-        @Override
+       /* @Override
         public void exitValFunction(ValFunctionContext ctx) {
             String name = ctx.functionCall().name.getText();
             Struct structContext = context == null ? StructType.get(struct).getStruct() : ((StructType) types.get(context)).getStruct();
@@ -248,7 +253,7 @@ public class Function {
                 types.put(ctx, type);
             }
             throw new GMSException(ctx, "Unknown function " + context + "." + ctx.functionCall().name.getText());
-        }
+        }*/
 
         @Override
         public void exitValArray(ValArrayContext ctx) {

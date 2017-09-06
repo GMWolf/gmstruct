@@ -149,6 +149,15 @@ public abstract class Type {
         public boolean assignsTo(Type type) {
             return type.equals(BOOLEAN);
         }
+
+        @Override
+        public Type getTypeAdd(Type other) {
+            if (other.equals(STRING)) {
+                return STRING;
+            }
+
+            return super.getTypeAdd(other);
+        }
     };
 
     //endregion
@@ -165,6 +174,7 @@ public abstract class Type {
             case "real" : return REAL;
             case "pointer" : return POINTER;
             case "array" : return ARRAY;
+            case "boolean" : return BOOLEAN;
         }
 
         return StructType.get(nameSpace.getStruct(name));

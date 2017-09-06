@@ -234,6 +234,18 @@ public interface GMStructListener extends ParseTreeListener {
 	 */
 	void exitIfStat(GMStructParser.IfStatContext ctx);
 	/**
+	 * Enter a parse tree produced by the {@code dotExpr}
+	 * labeled alternative in {@link GMStructParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void enterDotExpr(GMStructParser.DotExprContext ctx);
+	/**
+	 * Exit a parse tree produced by the {@code dotExpr}
+	 * labeled alternative in {@link GMStructParser#expr}.
+	 * @param ctx the parse tree
+	 */
+	void exitDotExpr(GMStructParser.DotExprContext ctx);
+	/**
 	 * Enter a parse tree produced by the {@code eqExpr}
 	 * labeled alternative in {@link GMStructParser#expr}.
 	 * @param ctx the parse tree
@@ -246,17 +258,17 @@ public interface GMStructListener extends ParseTreeListener {
 	 */
 	void exitEqExpr(GMStructParser.EqExprContext ctx);
 	/**
-	 * Enter a parse tree produced by the {@code dotExpr}
+	 * Enter a parse tree produced by the {@code funcExpr}
 	 * labeled alternative in {@link GMStructParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void enterDotExpr(GMStructParser.DotExprContext ctx);
+	void enterFuncExpr(GMStructParser.FuncExprContext ctx);
 	/**
-	 * Exit a parse tree produced by the {@code dotExpr}
+	 * Exit a parse tree produced by the {@code funcExpr}
 	 * labeled alternative in {@link GMStructParser#expr}.
 	 * @param ctx the parse tree
 	 */
-	void exitDotExpr(GMStructParser.DotExprContext ctx);
+	void exitFuncExpr(GMStructParser.FuncExprContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code addExpr}
 	 * labeled alternative in {@link GMStructParser#expr}.
@@ -411,18 +423,6 @@ public interface GMStructListener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitValStr(GMStructParser.ValStrContext ctx);
-	/**
-	 * Enter a parse tree produced by the {@code valFunction}
-	 * labeled alternative in {@link GMStructParser#value}.
-	 * @param ctx the parse tree
-	 */
-	void enterValFunction(GMStructParser.ValFunctionContext ctx);
-	/**
-	 * Exit a parse tree produced by the {@code valFunction}
-	 * labeled alternative in {@link GMStructParser#value}.
-	 * @param ctx the parse tree
-	 */
-	void exitValFunction(GMStructParser.ValFunctionContext ctx);
 	/**
 	 * Enter a parse tree produced by the {@code valArray}
 	 * labeled alternative in {@link GMStructParser#value}.
